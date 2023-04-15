@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Trip Planner</title>
+    <style>
+        #map {
+            height: 450px;
+            width: 500px;
+            margin-bottom: 30px;
+            margin-right: 50%;
+            left: 300px;
+            bottom: 600px;
+            right: 300px;
+            ;
+            
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+        }
+
+        input[type="number"],
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        input[type="submit"],
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #2a2b03;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        input[type="submit"]:hover,
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        h2 {
+            position: relative;
+            margin-top: 30px;
+        }
+
+        #cost p {
+            position: relative;
+            font-size: 18px;
+            left: 300px;
+            bottom: 650px;
+        }
+
+        #cost span {
+            position: relative;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <form onsubmit="calculateCosts(); return false;">
+        <label for="destination1">Starting Point:</label>
+        <input type="text" id="destination1" required><br>
+
+        <div id="additionalDestinations"></div>
+
+        <button type="button" onclick="addDestination()">Add Destination</button><br>
+
+        <label for="mpg">Vehicle MPG:</label>
+        <input type="number" id="mpg" step="0.001" required><br>
+
+        <label for="fuelCost">Fuel Cost per Gallon:</label>
+        <input type="number" id="fuelCost" min="0" step="0.001" required><br>
+
+        <label for="driverPay">Driver Pay per Mile:</label>
+        <input type="number" id="driverPay" min="0" step="0.001" required><br>
+
+        <label for="dispatchFee">Dispatch Fee in %:</label>
+        <input type="number" id="dispatchFee" min="0=" step="0.001" required><br>
+
+        <label for="otherCost">Other Cost per Mile</label>
+        <input type="number" id="otherCost" min="0=" step="0.001" required><br>
+
+
+        <button type="submit">Plan Trip</button>
+    </form>
+
+    <div id="map"></div>
+
+    <div id="cost" style="display: none;">
+        <h2>Trip Costs:</h2>
+        <p>Total Distance: <span id="totalDistance"></span></p>
+        <p>Total Duration: <span id="totalDuration"></span></p>
+        <p>Total Fuel Cost: $<span id="totalFuelCost"></span></p>
+        <p>Total Driver Pay: $<span id="totalDriverPay"></span></p>
+        <p>Total Dispatch Fee: $<span id="totalDispatchFee"></span></p>
+        <p>Total Other Cost: $<span id="totalOtherCost"></span></p>
+        <p>Total Trip Cost: $<span id="totalCost"></span></p>
+        <p>Cost per mile: $<span id="costPerMile"></span></p>
+
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHV7nb1cQ6-Fca8SVP9w1PcPEdaF8Mjxg&libraries=places"></script>
+    <script>
+        var map;
+        var directionsService;
+        var directionsRenderer;
+        var destinationNumber = 2;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: 37.7749, lng: -122.4194},
+                zoom: 13
+            });
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+            directionsRenderer.setMap(map);
+
+            // Restore user input from local storage
+            document.getElementById("mpg").value = localStorage.getItem("mpg");
+            document.getElementById("fuelCost").value = localStorage.getItem("fuelCost");
+            document.getElementById("driverPay").value = localStorage.getItem("driverPay");
+            document.getElementById("dispatchFee").value = localStorage.getItem("dispatchFee");
+            document.getElementById("otherCost").value = localStorage.getItem("otherCost");
+
+        }
+
+        function addDestination() {
+            
+            var div = document.createElement("div");
+            div.innerHTML = '<label for="destination' + destinationNumber + '">Destination ' + destinationNumber + ':</label>' +
+                             '<input type="text" id="destination' + destinationNumber + '"><br>';
+
+            document.getElementById("additionalDestinations").appendChild(div);
+
+            var autocomplete = new google.maps.places.Autocomplete(document.getElementById('destination' + destinationNumber));
+            autocomplete.bindTo('bounds', map);
+
+            destinationNumber++;
+        }
+
+        function calculateCosts() {
+            var origin = document.getElementById("destination1").value;
+            var waypoints = [];
+            for (var i = 2; i < destinationNumber; i++) {
+                var destination = document.getElementById("destination" + i).value;
+                if (destination) {
+                    waypoints.push({
+                        location: destination,
+                        stopover: true
+                    });
+                }
+            }
+            var destination = document.getElementById("destination" + (destinationNumber - 1)).value;
+            var mpg = parseFloat(document.getElementById("mpg").value);
+            var fuelCost = parseFloat(document.getElementById("fuelCost").value);
+            var driverPay = parseFloat(document.getElementById("driverPay").value);
+            var dispatchFee = parseFloat(document.getElementById("dispatchFee").value);
+            var otherCost = parseFloat(document.getElementById("otherCost").value);
+
+
+            var request = {
+                origin: origin,
+                waypoints: waypoints,
+                destination: destination,
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+    
+            directionsService.route(request, function(result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(result);
+                    var totalDistance = 0;
+                    var totalDuration = 0;
+                    var legs = result.routes[0].legs;
+                    for (var i = 0; i < legs.length; i++) {
+                        totalDistance += legs[i].distance.value;
+                        totalDuration += legs[i].duration.value; // Sum up the duration of each leg
+
+                    }
+                    var totalDistanceMiles = totalDistance / 1609.34;
+                    var totalDurationHours = Math.floor(totalDuration / 3600); // Calculate total hours
+                    var totalDurationMinutes = Math.floor((totalDuration % 3600) / 60); // Calculate total minutes
+                    var totalFuelCost = (totalDistanceMiles / mpg) * fuelCost;
+                    var totalDriverPay = (totalDistanceMiles * driverPay);
+                    var totalDispatchFee = (totalFuelCost + totalDriverPay) * (dispatchFee / 100);
+                    var totalOtherCost = totalDistanceMiles * otherCost;
+                    var totalCost = totalFuelCost + totalDriverPay + totalDispatchFee + totalOtherCost;
+                    var costPerMile = totalCost / totalDistanceMiles;
+                   
+
+                    document.getElementById("totalDistance").innerHTML = totalDistanceMiles.toFixed(2) + " mi";
+                    document.getElementById("totalDuration").innerHTML = totalDurationHours + " h " + totalDurationMinutes + " min";
+                    document.getElementById("totalFuelCost").innerHTML = totalFuelCost.toFixed(2);
+                    document.getElementById("totalDriverPay").innerHTML = totalDriverPay.toFixed(2);
+                    document.getElementById("totalDispatchFee").innerHTML = totalDispatchFee.toFixed(2);
+                    document.getElementById("totalOtherCost").innerHTML = totalOtherCost.toFixed(2);
+                    document.getElementById("totalCost").innerHTML = totalCost.toFixed(2);
+                    document.getElementById("costPerMile").innerHTML = costPerMile.toFixed(2);
+
+                    document.getElementById("cost").style.display = "block";
+
+                    // Save user input to local storage
+                    localStorage.setItem("mpg", mpg);
+                    localStorage.setItem("fuelCost", fuelCost);
+                    localStorage.setItem("driverPay", driverPay);
+                    localStorage.setItem("dispatchFee", dispatchFee);
+                    localStorage.setItem("otherCost", otherCost);
+
+                }
+            });
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHV7nb1cQ6-Fca8SVP9w1PcPEdaF8Mjxg&libraries=places&callback=initMap">
+    </script>
+</body>
+</html>
