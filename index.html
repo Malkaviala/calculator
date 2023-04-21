@@ -106,6 +106,7 @@
         }
     </style>
 </head>
+
 <body onload="initMap()">
     <form onsubmit="calculateCosts(); return false;">
         <label for="destination1">Starting Point:</label>
@@ -132,6 +133,9 @@
         <label for="otherCost">Other Cost per Mile</label>
         <input type="number" id="otherCost" min="0=" step="0.001" required><br>
 
+        <label for="rate"> Provided Rate in $:</label>
+        <input type="number" id="rate" min="0=" step="0.001"><br>
+
         
         <button type="submit">Plan Trip</button>
         <button type="button" onclick="resetAddresses()">Reset</button>
@@ -152,6 +156,9 @@
         <p>Total Other Cost: $<span id="totalOtherCost"></span></p>
         <p>Total Trip Cost: $<span id="totalCost"></span></p>
         <p>Cost per mile: $<span id="costPerMile"></span></p>
+        <p>Gain or Loss: $<span id="gainOrLoss"></span></p>
+        <p> % Gain or Loss: <span id="percentGainOrLoss"></span></p>
+        <p> Cost per Mile Gain or Loss: $<span id="costPerMileGainOrLoss"></span></p>
 
     </div>
 
@@ -245,6 +252,10 @@
             var driverPay = parseFloat(document.getElementById("driverPay").value);
             var dispatchFee = parseFloat(document.getElementById("dispatchFee").value);
             var otherCost = parseFloat(document.getElementById("otherCost").value);
+            var rate = parseFloat(document.getElementById("rate").value);
+            var gainOrLoss;
+            var percentGainOrLoss;
+            var costPerMileGainOrLoss;
 
 
             var request = {
@@ -274,6 +285,11 @@
                     var totalOtherCost = totalDistanceMiles * otherCost;
                     var totalCost = totalFuelCost + totalDriverPay + totalDispatchFee + totalOtherCost;
                     var costPerMile = totalCost / totalDistanceMiles;
+                    var gainOrLoss = rate - totalCost;
+                    var percentGainOrLoss = (gainOrLoss / rate) * 100;
+                    var costPerMileGainOrLoss = rate / totalDistanceMiles;
+
+                    
                    
 
                     document.getElementById("totalDistance").innerHTML = totalDistanceMiles.toFixed(2) + " mi";
@@ -284,6 +300,23 @@
                     document.getElementById("totalOtherCost").innerHTML = totalOtherCost.toFixed(2);
                     document.getElementById("totalCost").innerHTML = totalCost.toFixed(2);
                     document.getElementById("costPerMile").innerHTML = costPerMile.toFixed(2);
+
+                    if (gainOrLoss >= 0) {
+                    document.getElementById("gainOrLoss").innerHTML = "You made $" + gainOrLoss.toFixed(2);
+                    document.getElementById("gainOrLoss").style.color = "green";
+                    document.getElementById("percentGainOrLoss").style.color = "green";
+                    document.getElementById("costPerMileGainOrLoss").style.color = "green";
+
+                    } else {
+                    document.getElementById("gainOrLoss").innerHTML = "You lost $" + Math.abs(gainOrLoss).toFixed(2);
+                    document.getElementById("gainOrLoss").style.color = "red";
+                    document.getElementById("percentGainOrLoss").style.color = "red";
+                    document.getElementById("costPerMileGainOrLoss").style.color = "red";
+                    }
+                    document.getElementById("percentGainOrLoss").innerHTML = percentGainOrLoss.toFixed(2) + "%";
+                    document.getElementById("costPerMileGainOrLoss").innerHTML = costPerMileGainOrLoss.toFixed(2);
+
+
 
                     document.getElementById("cost").style.display = "block";
 
@@ -298,7 +331,6 @@
             });
         }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHV7nb1cQ6-Fca8SVP9w1PcPEdaF8Mjxg&libraries=places&callback=initMap">
-    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHV7nb1cQ6-Fca8SVP9w1PcPEdaF8Mjxg&libraries=places&callback=initMap"></script>
 </body>
 </html>
