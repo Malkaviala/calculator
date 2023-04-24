@@ -6,113 +6,134 @@
     <meta charset="utf-8">
     <title>Trip Planner</title>
     <style>
-        body {
-        font-family: Arial, sans-serif;
-        background-color: #f2f2f2;
-      }
+      @import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500&display=swap');
 
-      #form-container {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 10px;
+body {
+    font-family: 'Schibsted Grotesk', sans-serif;
+        background-color: #081b29;
+  }
+
+  #form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  form {
+    display: inline-block;
+    width: 50%;
+    padding: 20px;
+    vertical-align: top;
+  }
+
+
+ 
+    #map {
+        size: auto;
+        height: 450px;
+        width: 100%;
+        margin-top: 30px;
+        border-radius: 20px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-      }
+        
+    }
 
-      form {
-        display: inline-block;
-        width: 50%;
-        padding: 20px;
-        vertical-align: top;
-      }
-    
+    label {
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+        color: white;
+    }
 
-     
-        #map {
-            height: 450px;
-            width: 100%;
-            margin-top: 30px;
-            border-radius: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            
-        }
+    input[type="number"],input[type="text"] {
+        padding: 10px;
+        font-size: 16px;
+        width: 450px;
+        border: 1px solid #ccc;
+        border-radius: 30px;
+        margin-top: 15px;
+        box-sizing: border-box;
+    }
 
-        label {
-            font-weight: bold;
-            margin-top: 10px;
-            display: block;
-        }
-
-        input[type="number"],input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            width: 450px;
-            border: 1px solid #ccc;
-            border-radius: 30px;
-            margin-top: 15px;
-            box-sizing: border-box;
-        }
-
-        input[type="submit"],button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #2a2b03;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-
-        input[type="submit"], button {
+    input[type="submit"],button {
         padding: 10px 20px;
         font-size: 16px;
         background-color: #2a2b03;
-        color: #fff;
+        color: #f4f5f1;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         margin-top: 20px;
-        }
+    }
 
-        input[type="submit"]:hover, button:hover {
-            background-color: #3e8341;
-        }
+    input[type="submit"], button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: blue;;
+    color: #f4f5f1;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    position: a;
+    size: 15px;
+    }
 
-        h2 {
-            position: relative;
-            margin-top: 30px;
-        }
+    input[type="submit"]:hover, button:hover {
+        background-color: #3e8341;
+    }
 
-        #cost  {
-            margin-top: 30px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
+    h1 {
+        background-color: blue;
+        width: 100%;
+        font-size: 35px;
+        font-weight: bold;
+        margin-top: 0;
+        color: white !important;
+        text-align: center;
+        margin-left: 0;
+        margin-right: 0;
+    }
 
-        #cost p {
-        margin-top: 10px;
-        font-size: 18px;
-        display: flex;
-        align-items: center;
-      }
+    h2 {
+        text-align: center;
+        font-size: 25px;
+        position: relative;
+        margin-top: 30px;
+    }
 
-        #cost span {
-            margin-left: auto;
-            font-weight: bold;   
-        }
+    #cost  {
+        margin-top: 30px;
+        background-color: #f4f5f1;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #cost p {
+    margin-top: 10px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+  }
+
+    #cost span {
+        size: auto;
+        margin-left: auto;
+        font-weight: bold;   
+    }
+
     </style>
 </head>
-
 <body onload="initMap()">
     <form onsubmit="calculateCosts(); return false;">
+
         <label for="destination1">Starting Point:</label>
         <input type="text" id="destination1" required><br>
 
-        
 
         <div id="additionalDestinations"></div>
 
@@ -134,34 +155,39 @@
         <input type="number" id="otherCost" min="0=" step="0.001" required><br>
 
         <label for="rate"> Provided Rate in $:</label>
-        <input type="number" id="rate" min="0=" step="0.001"><br>
+        <input type="number" id="rate" min="0=" step="0.001" value="0"><br>
+
+        <label for="quickPay"> Quick Pay in %:</label>
+        <input type="number" id="quickPay" min="0=" step="0.001" value="0"><br>
 
         
         <button type="submit">Plan Trip</button>
         <button type="button" onclick="resetAddresses()">Reset</button>
         <button type="button" onclick="useCurrentLocation()">Current Location</button>
-
-
     </form>
-
-    <div id="map"></div>
-
     <div id="cost" style="display: none;">
-        
+        <h2>Trip Cost Break Down</h2>
+        <hr>
         <p>Total Distance: <span id="totalDistance"></span></p>
         <p>Total Duration: <span id="totalDuration"></span></p>
         <p>Total Fuel Cost: $<span id="totalFuelCost"></span></p>
         <p>Total Driver Pay: $<span id="totalDriverPay"></span></p>
         <p>Total Dispatch Fee: $<span id="totalDispatchFee"></span></p>
         <p>Total Other Cost: $<span id="totalOtherCost"></span></p>
+        <hr>
         <p>Total Trip Cost: $<span id="totalCost"></span></p>
         <p>Cost per mile: $<span id="costPerMile"></span></p>
-        <p>Gain or Loss: $<span id="gainOrLoss"></span></p>
+        <p>Gain or Loss: <span id="gainOrLoss"></span></p>
         <p> % Gain or Loss: <span id="percentGainOrLoss"></span></p>
         <p> Cost per Mile Gain or Loss: $<span id="costPerMileGainOrLoss"></span></p>
-
+        <hr>
+        <p> Total Quick Pay: $<span id="totalQuickPay"></span></p>
+        <p> Total Cost After Quick Pay: $<span id="totalCostAfterQuickPay"></span></p>
+        <p> Cost per Mile After Quick Pay: $<span id="costPerMileAfterQuickPay"></span></p>
+        <hr>
+        <p> Profit or Loss After Quick Pay: <span id="profitOrLoss"></span></p>
     </div>
-
+    <div id="map"></div>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHV7nb1cQ6-Fca8SVP9w1PcPEdaF8Mjxg&libraries=places"></script>
     <script>
         var map;
@@ -184,6 +210,11 @@
             document.getElementById("driverPay").value = localStorage.getItem("driverPay");
             document.getElementById("dispatchFee").value = localStorage.getItem("dispatchFee");
             document.getElementById("otherCost").value = localStorage.getItem("otherCost");
+
+            var destination1 = document.getElementById("destination1");
+            var autocomplete = new google.maps.places.Autocomplete(destination1);
+            autocomplete.bindTo('bounds', map);
+
 
         }
 
@@ -253,9 +284,14 @@
             var dispatchFee = parseFloat(document.getElementById("dispatchFee").value);
             var otherCost = parseFloat(document.getElementById("otherCost").value);
             var rate = parseFloat(document.getElementById("rate").value);
+            var quickPay = parseFloat(document.getElementById("quickPay").value);
             var gainOrLoss;
             var percentGainOrLoss;
             var costPerMileGainOrLoss;
+            var totalCostAfterQuickPay;
+            var costPerMileAfterQuickPay;
+            var profitOrLoss;
+            
 
 
             var request = {
@@ -284,52 +320,83 @@
                     var totalDispatchFee = (totalFuelCost + totalDriverPay) * (dispatchFee / 100);
                     var totalOtherCost = totalDistanceMiles * otherCost;
                     var totalCost = totalFuelCost + totalDriverPay + totalDispatchFee + totalOtherCost;
+                    var totalQuickPay = (rate * quickPay) / 100;
                     var costPerMile = totalCost / totalDistanceMiles;
                     var gainOrLoss = rate - totalCost;
                     var percentGainOrLoss = (gainOrLoss / rate) * 100;
                     var costPerMileGainOrLoss = rate / totalDistanceMiles;
+                    var totalCostAfterQuickPay = totalCost - totalQuickPay;
+                    var costPerMileAfterQuickPay = totalCostAfterQuickPay / totalDistanceMiles;
 
                     
-                   
+                
 
-                    document.getElementById("totalDistance").innerHTML = totalDistanceMiles.toFixed(2) + " mi";
-                    document.getElementById("totalDuration").innerHTML = totalDurationHours + " h " + totalDurationMinutes + " min";
-                    document.getElementById("totalFuelCost").innerHTML = totalFuelCost.toFixed(2);
-                    document.getElementById("totalDriverPay").innerHTML = totalDriverPay.toFixed(2);
-                    document.getElementById("totalDispatchFee").innerHTML = totalDispatchFee.toFixed(2);
-                    document.getElementById("totalOtherCost").innerHTML = totalOtherCost.toFixed(2);
-                    document.getElementById("totalCost").innerHTML = totalCost.toFixed(2);
-                    document.getElementById("costPerMile").innerHTML = costPerMile.toFixed(2);
+                    if (quickPay) {
+                    totalQuickPay = (rate * quickPay) / 100;
+                    var totalCostAfterQuickPay = rate - totalQuickPay;
+                    var costPerMileAfterQuickPay = totalCostAfterQuickPay / totalDistanceMiles;
+                    var profitOrLoss = totalCostAfterQuickPay - totalCost;
 
-                    if (gainOrLoss >= 0) {
-                    document.getElementById("gainOrLoss").innerHTML = "You made $" + gainOrLoss.toFixed(2);
+                    
+        
+                    document.getElementById("totalQuickPay").innerHTML = "$" + totalQuickPay.toLocaleString();
+                    document.getElementById("totalCostAfterQuickPay").innerHTML = "$" + totalCostAfterQuickPay.toLocaleString();
+                    document.getElementById("costPerMileAfterQuickPay").innerHTML = "$" + costPerMileAfterQuickPay.toFixed(2);
+                    document.getElementById("profitOrLoss").innerHTML = "$" + profitOrLoss.toLocaleString();
+        
+                    if (profitOrLoss >= 0) {
+                        document.getElementById("profitOrLoss").innerHTML = "You have made $" + profitOrLoss.toFixed(2) + " of profit on this load After Quick Pay.";
+                        document.getElementById("profitOrLoss").style.color = "green";
+                    } else {
+                        document.getElementById("profitOrLoss").innerHTML = "You have lost $" + Math.abs(profitOrLoss).toFixed(2) + " on this load.";
+                        document.getElementById("profitOrLoss").style.color = "red";
+                    }
+                } else {
+                    // If quick pay is not provided, clear related fields
+                    document.getElementById("totalQuickPay").innerHTML = "";
+                    document.getElementById("totalCostAfterQuickPay").innerHTML = "";
+                    document.getElementById("costPerMileAfterQuickPay").innerHTML = "";
+                    document.getElementById("profitOrLoss").innerHTML = "";
+                }
+        
+                document.getElementById("totalDistance").innerHTML = totalDistanceMiles.toLocaleString() + " mi";
+                document.getElementById("totalDuration").innerHTML = totalDurationHours + " h " + totalDurationMinutes + " min";
+                document.getElementById("totalFuelCost").innerHTML = "$" + totalFuelCost.toLocaleString();
+                document.getElementById("totalDriverPay").innerHTML = "$" + totalDriverPay.toLocaleString();
+                document.getElementById("totalDispatchFee").innerHTML = "$" + totalDispatchFee.toLocaleString();
+                document.getElementById("totalOtherCost").innerHTML = "$" + totalOtherCost.toLocaleString();
+                document.getElementById("totalCost").innerHTML = "$" + totalCost.toLocaleString();
+                document.getElementById("costPerMile").innerHTML = "$" + costPerMile.toFixed(2);
+        
+                if (gainOrLoss >= 0) {
+                    document.getElementById("gainOrLoss").innerHTML = "You have made $" + gainOrLoss.toLocaleString() + " of profit on this load.";
                     document.getElementById("gainOrLoss").style.color = "green";
                     document.getElementById("percentGainOrLoss").style.color = "green";
                     document.getElementById("costPerMileGainOrLoss").style.color = "green";
-
-                    } else {
-                    document.getElementById("gainOrLoss").innerHTML = "You lost $" + Math.abs(gainOrLoss).toFixed(2);
+                } else {
+                    document.getElementById("gainOrLoss").innerHTML = "You have lost $" + Math.abs(gainOrLoss).toLocaleString() + " on this load.";
                     document.getElementById("gainOrLoss").style.color = "red";
                     document.getElementById("percentGainOrLoss").style.color = "red";
                     document.getElementById("costPerMileGainOrLoss").style.color = "red";
-                    }
-                    document.getElementById("percentGainOrLoss").innerHTML = percentGainOrLoss.toFixed(2) + "%";
-                    document.getElementById("costPerMileGainOrLoss").innerHTML = costPerMileGainOrLoss.toFixed(2);
-
-
-
-                    document.getElementById("cost").style.display = "block";
-
-                    // Save user input to local storage
-                    localStorage.setItem("mpg", mpg);
-                    localStorage.setItem("fuelCost", fuelCost);
-                    localStorage.setItem("driverPay", driverPay);
-                    localStorage.setItem("dispatchFee", dispatchFee);
-                    localStorage.setItem("otherCost", otherCost);
-
                 }
-            });
-        }
+        
+                document.getElementById("percentGainOrLoss").innerHTML = "Which is " + percentGainOrLoss.toFixed(2) + "%" + " of the Total cost.";
+                document.getElementById("costPerMileGainOrLoss").innerHTML = "$" + costPerMileGainOrLoss.toFixed(2);
+        
+                document.getElementById("cost").style.display = "block";
+        
+
+                // Save user input to local storage
+                localStorage.setItem("mpg", mpg);
+                localStorage.setItem("fuelCost", fuelCost);
+                localStorage.setItem("driverPay", driverPay);
+                localStorage.setItem("dispatchFee", dispatchFee);
+                localStorage.setItem("otherCost", otherCost);
+
+            }
+        });
+
+    }
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHV7nb1cQ6-Fca8SVP9w1PcPEdaF8Mjxg&libraries=places&callback=initMap"></script>
 </body>
