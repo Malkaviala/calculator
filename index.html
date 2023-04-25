@@ -249,6 +249,27 @@ body {
             // Clear additional destinations
             document.getElementById("additionalDestinations").innerHTML = "";
             destinationNumber = 2;
+            
+            // Reset the calculated results
+            document.getElementById("totalDistance").innerHTML = "";
+            document.getElementById("totalDuration").innerHTML = "";
+            document.getElementById("totalFuelCost").innerHTML = "";
+            document.getElementById("totalDriverPay").innerHTML = "";
+            document.getElementById("totalDispatchFee").innerHTML = "";
+            document.getElementById("totalOtherCost").innerHTML = "";
+            document.getElementById("totalCost").innerHTML = "";
+            document.getElementById("costPerMile").innerHTML = "";
+            document.getElementById("gainOrLoss").innerHTML = "";
+            document.getElementById("percentGainOrLoss").innerHTML = "";
+            document.getElementById("costPerMileGainOrLoss").innerHTML = "";
+            document.getElementById("totalQuickPay").innerHTML = "";
+            document.getElementById("totalCostAfterQuickPay").innerHTML = "";
+            document.getElementById("costPerMileAfterQuickPay").innerHTML = "";
+            document.getElementById("profitOrLoss").innerHTML = "";
+
+            // Hide the calculated results section
+            document.getElementById("cost").style.display = "none";
+
         }
 
 
