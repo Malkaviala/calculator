@@ -155,10 +155,10 @@ body {
         <input type="number" id="otherCost" min="0=" step="0.001" required><br>
 
         <label for="rate"> Provided Rate in $:</label>
-        <input type="number" id="rate" min="0=" step="0.001" value="0"><br>
+        <input type="number" id="rate" min="0=" step="0.001"><br>
 
         <label for="quickPay"> Quick Pay in %:</label>
-        <input type="number" id="quickPay" min="0=" step="0.001" value="0"><br>
+        <input type="number" id="quickPay" min="0=" step="0.001"><br>
 
         
         <button type="submit">Plan Trip</button>
@@ -180,6 +180,7 @@ body {
         <p>Gain or Loss: <span id="gainOrLoss"></span></p>
         <p> % Gain or Loss: <span id="percentGainOrLoss"></span></p>
         <p> Cost per Mile Gain or Loss: $<span id="costPerMileGainOrLoss"></span></p>
+        <hr>
         <hr>
         <p> Total Quick Pay: <span id="totalQuickPay"></span></p>
         <p> Total Cost After Quick Pay: <span id="totalCostAfterQuickPay"></span></p>
@@ -249,13 +250,13 @@ body {
             document.getElementById("additionalDestinations").innerHTML = "";
             destinationNumber = 2;
         }
-        
+
 
         function addDestination() {
             
             var div = document.createElement("div");
             div.innerHTML = '<label for="destination' + destinationNumber + '">Destination ' + destinationNumber + ':</label>' +
-                             '<input type="text" id="destination' + destinationNumber + '"><br>';
+                            '<input type="text" id="destination' + destinationNumber + '"><br>';
 
             document.getElementById("additionalDestinations").appendChild(div);
 
@@ -291,8 +292,6 @@ body {
             var totalCostAfterQuickPay;
             var costPerMileAfterQuickPay;
             var profitOrLoss;
-            
-
 
             var request = {
                 origin: origin,
@@ -300,7 +299,7 @@ body {
                 destination: destination,
                 travelMode: google.maps.TravelMode.DRIVING
             };
-    
+
             directionsService.route(request, function(result, status) {
                 if (status == google.maps.DirectionsStatus.OK) {
                     directionsRenderer.setDirections(result);
@@ -310,7 +309,6 @@ body {
                     for (var i = 0; i < legs.length; i++) {
                         totalDistance += legs[i].distance.value;
                         totalDuration += legs[i].duration.value; // Sum up the duration of each leg
-
                     }
                     var totalDistanceMiles = totalDistance / 1609.34;
                     var totalDurationHours = Math.floor(totalDuration / 3600); // Calculate total hours
@@ -328,37 +326,46 @@ body {
                     var totalCostAfterQuickPay = totalCost - totalQuickPay;
                     var costPerMileAfterQuickPay = totalCostAfterQuickPay / totalDistanceMiles;
 
-                    
-                
-
                     if (quickPay) {
-                    totalQuickPay = (rate * quickPay) / 100;
-                    var totalCostAfterQuickPay = rate - totalQuickPay;
-                    var costPerMileAfterQuickPay = totalCostAfterQuickPay / totalDistanceMiles;
-                    var profitOrLoss = totalCostAfterQuickPay - totalCost;
+                        totalQuickPay = (rate * quickPay) / 100;
+                        var totalCostAfterQuickPay = rate - totalQuickPay;
+                        var costPerMileAfterQuickPay = totalCostAfterQuickPay / totalDistanceMiles;
+                        var profitOrLoss = totalCostAfterQuickPay - totalCost;
 
-                    
-        
-                    document.getElementById("totalQuickPay").innerHTML = "$" + totalQuickPay.toLocaleString();
-                    document.getElementById("totalCostAfterQuickPay").innerHTML = "$" + totalCostAfterQuickPay.toLocaleString();
-                    document.getElementById("costPerMileAfterQuickPay").innerHTML = "$" + costPerMileAfterQuickPay.toFixed(2);
-                    document.getElementById("profitOrLoss").innerHTML = "$" + profitOrLoss.toLocaleString();
-        
-                    if (profitOrLoss >= 0) {
-                        document.getElementById("profitOrLoss").innerHTML = "You have made $" + profitOrLoss.toFixed(2) + " of profit on this load After Quick Pay.";
-                        document.getElementById("profitOrLoss").style.color = "green";
+                        document.getElementById("totalQuickPay").innerHTML = "$" + totalQuickPay.toLocaleString();
+                        document.getElementById("totalCostAfterQuickPay").innerHTML = "$" + totalCostAfterQuickPay.toLocaleString();
+                        document.getElementById("costPerMileAfterQuickPay").innerHTML = "$" + costPerMileAfterQuickPay.toFixed(2);
+                        document.getElementById("profitOrLoss").innerHTML = "$" + profitOrLoss.toLocaleString();
+            
+                        if (profitOrLoss >= 0) {
+                            document.getElementById("profitOrLoss").innerHTML = "You have made $" + profitOrLoss.toFixed(2) + " of profit on this load After Quick Pay.";
+                            document.getElementById("profitOrLoss").style.color = "green";
+                        } else {
+                            document.getElementById("profitOrLoss").innerHTML = "You have lost $" + Math.abs(profitOrLoss).toFixed(2) + " on this load.";
+                            document.getElementById("profitOrLoss").style.color = "red";
+                        }
+            
+                        // Show the "percentGainOrLoss" and "costPerMileGainOrLoss" elements only if a valid gain or loss value exists
+                        document.getElementById("percentGainOrLoss").style.display = "";
+                        document.getElementById("costPerMileGainOrLoss").style.display = "";
                     } else {
-                        document.getElementById("profitOrLoss").innerHTML = "You have lost $" + Math.abs(profitOrLoss).toFixed(2) + " on this load.";
-                        document.getElementById("profitOrLoss").style.color = "red";
+                        // If quick pay is not provided, clear related fields
+                        document.getElementById("totalQuickPay").innerHTML = "";
+                        document.getElementById("totalCostAfterQuickPay").innerHTML = "";
+                        document.getElementById("costPerMileAfterQuickPay").innerHTML = "";
+                        document.getElementById("profitOrLoss").innerHTML = "";
+            
+                        // Hide the "percentGainOrLoss" and "costPerMileGainOrLoss" elements if no gain or loss value exists
+                        if (isNaN(gainOrLoss)) {
+                            document.getElementById("percentGainOrLoss").style.display = "none";
+                            document.getElementById("costPerMileGainOrLoss").style.display = "none";
+                        } else {
+                            document.getElementById("percentGainOrLoss").style.display = "";
+                            document.getElementById("costPerMileGainOrLoss").style.display = "";
+                        }
                     }
-                } else {
-                    // If quick pay is not provided, clear related fields
-                    document.getElementById("totalQuickPay").innerHTML = "";
-                    document.getElementById("totalCostAfterQuickPay").innerHTML = "";
-                    document.getElementById("costPerMileAfterQuickPay").innerHTML = "";
-                    document.getElementById("profitOrLoss").innerHTML = "";
                 }
-        
+            
                 document.getElementById("totalDistance").innerHTML = totalDistanceMiles.toLocaleString() + " mi";
                 document.getElementById("totalDuration").innerHTML = totalDurationHours + " h " + totalDurationMinutes + " min";
                 document.getElementById("totalFuelCost").innerHTML = "$" + totalFuelCost.toLocaleString();
@@ -367,8 +374,29 @@ body {
                 document.getElementById("totalOtherCost").innerHTML = "$" + totalOtherCost.toLocaleString();
                 document.getElementById("totalCost").innerHTML = "$" + totalCost.toLocaleString();
                 document.getElementById("costPerMile").innerHTML = "$" + costPerMile.toFixed(2);
-        
-                if (gainOrLoss >= 0) {
+            
+                // Hide the "gainOrLoss" element if no gain or loss value exists
+                if (isNaN(gainOrLoss)) {
+                    document.getElementById("gainOrLoss").innerHTML = "";
+                    document.getElementById("gainOrLoss").style.display = "";
+                }
+            
+                if (gainOrLoss == totalCost) {
+                    document.getElementById("gainOrLoss").innerHTML = "You have broken even on this load.";
+                    document.getElementById("gainOrLoss").style.color = "black";
+                    document.getElementById("percentGainOrLoss").style.color = "black";
+                    document.getElementById("costPerMileGainOrLoss").style.color = "black";
+            
+                } else if (gainOrLoss < 0) {
+                    document.getElementById("gainOrLoss").innerHTML = "You have lost $" + Math.abs(gainOrLoss).toLocaleString() + " on this load.";
+                    document.getElementById("gainOrLoss").style.color = "red";
+                    document.getElementById("percentGainOrLoss").style.color = "red";
+                    document.getElementById("costPerMileGainOrLoss").style.color = "red";
+            
+                }
+            
+                
+                if (gainOrLoss > 0) {
                     document.getElementById("gainOrLoss").innerHTML = "You have made $" + gainOrLoss.toLocaleString() + " of profit on this load.";
                     document.getElementById("gainOrLoss").style.color = "green";
                     document.getElementById("percentGainOrLoss").style.color = "green";
@@ -379,24 +407,24 @@ body {
                     document.getElementById("percentGainOrLoss").style.color = "red";
                     document.getElementById("costPerMileGainOrLoss").style.color = "red";
                 }
-        
+            
                 document.getElementById("percentGainOrLoss").innerHTML = "Which is " + percentGainOrLoss.toFixed(2) + "%" + " of the Total cost.";
                 document.getElementById("costPerMileGainOrLoss").innerHTML = "$" + costPerMileGainOrLoss.toFixed(2);
-        
+            
                 document.getElementById("cost").style.display = "block";
-        
-
+            
+                
+            
+            
                 // Save user input to local storage
                 localStorage.setItem("mpg", mpg);
                 localStorage.setItem("fuelCost", fuelCost);
                 localStorage.setItem("driverPay", driverPay);
                 localStorage.setItem("dispatchFee", dispatchFee);
                 localStorage.setItem("otherCost", otherCost);
-
-            }
-        });
-
-    }
+            
+            });
+        }
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHV7nb1cQ6-Fca8SVP9w1PcPEdaF8Mjxg&libraries=places&callback=initMap"></script>
 </body>
