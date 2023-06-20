@@ -286,6 +286,15 @@ body {
 
             destinationNumber++;
         }
+         // Attach event listeners to input elements
+        document.getElementById("mpg").addEventListener("input", calculateCosts);
+        document.getElementById("fuelCost").addEventListener("input", calculateCosts);
+        document.getElementById("driverPay").addEventListener("input", calculateCosts);
+        document.getElementById("dispatchFee").addEventListener("input", calculateCosts);
+        document.getElementById("otherCost").addEventListener("input", calculateCosts);
+        document.getElementById("rate").addEventListener("input", calculateCosts);
+        document.getElementById("quickPay").addEventListener("input", calculateCosts);
+
 
         function calculateCosts() {
             var origin = document.getElementById("destination1").value;
